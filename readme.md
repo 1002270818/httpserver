@@ -1,59 +1,22 @@
-# WebServer
-用C++实现的高性能WEB服务器，经过webbenchh压力测试可以实现上万的QPS
+# httpServer
+使用C++11标准编写的基于Reactor非阻塞IO模型的高性能 Web 服务器，支持一定数量的客户端连接并发连接并及时响应，支持客户端对服务器静态资源的访问，在特定端口浏览、上传和下载服务器文件。
 
 ## 功能
-* 利用IO复用技术Epoll与线程池实现多线程的Reactor高并发模型；
-* 利用正则与状态机解析HTTP请求报文，实现处理静态资源的请求；
-* 基于小根堆实现的定时器，关闭超时的非活动连接；
-* 利用单例模式与阻塞队列实现异步的日志系统，记录服务器运行状态；
-* 利用RAII机制实现了数据库连接池，减少数据库连接建立与关闭的开销，同时实现了用户注册登录功能。
+1、利用IO复用技术Epoll与线程池实现多线程的Reactor高并发模型；支持ET和LT两种触发模式；
+2、使用有限状态机与正则解析HTTP请求报文，对GET和POST报文进行处理；
+3、利用LFU缓存机制实现高频页面的高效传输，提高服务器响应；
+4、模仿STL allocator，实现了基于哈希桶的内存池，提高程序内存的利用效率；
+5、基于小根堆实现定时器，关闭超时的非活跃连接；
+6、利用单例模式与阻塞队列实现异步的日志系统，记录服务器运行状态。
 
 ## 环境要求
 * Linux
-* C++14
+* C++11
 * MySql
 
 ## 项目启动
 需要先配置好对应的数据库
 ```bash
-// 建立yourdb库
-create database yourdb;
-
-// 创建user表
-USE yourdb;
-CREATE TABLE user(
-    username char(50) NULL,
-    password char(50) NULL
-)ENGINE=InnoDB;
-
-// 添加数据
-INSERT INTO user(username, password) VALUES('name', 'password');
-```
-
-```bash
 make
 ./bin/server
 ```
-
-## 单元测试
-```bash
-cd test
-make
-./test
-```
-
-## 压力测试
-![image-webbench](https://github.com/markparticle/WebServer/blob/master/readme.assest/%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95.png)
-```bash
-./webbench-1.5/webbench -c 100 -t 10 http://ip:port/
-./webbench-1.5/webbench -c 1000 -t 10 http://ip:port/
-./webbench-1.5/webbench -c 5000 -t 10 http://ip:port/
-./webbench-1.5/webbench -c 10000 -t 10 http://ip:port/
-```
-* 测试环境: Ubuntu:19.10 cpu:i5-8400 内存:8G 
-* QPS 10000+
-
-## TODO
-* config配置
-* 完善单元测试
-* 实现循环缓冲区
